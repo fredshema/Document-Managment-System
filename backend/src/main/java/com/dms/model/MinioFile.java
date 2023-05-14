@@ -1,9 +1,10 @@
 package com.dms.model;
 
-import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import org.springframework.beans.factory.annotation.Value;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,10 @@ import javax.persistence.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 public class MinioFile {
+    @value("${spring.application.url}")
+    @Transient
+    private String applicationUrl;
+
     @Id
     private String id;
     private String title;
@@ -36,7 +41,7 @@ public class MinioFile {
         this.title = title;
     }
 
-    public String getUrl(HttpServletRequest request) {
-        return request.getRequestURL().toString().replace(request.getServletPath(), "") + "/download/" + id.replace("\"", "");
+    public String getUrl() {
+        return applicationUrl + "/download/" + id.replace("\"", "");
     }
 }
