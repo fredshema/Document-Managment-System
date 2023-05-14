@@ -33,28 +33,24 @@ function Register({ setIsLogin }) {
     e.preventDefault();
     setMessage("");
     setLoading(true);
-    AuthService.register(names, email, username, password).then(
-      (res) => {
-        if (res.status === 200) {
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("user", JSON.stringify(res.data.user));
-          window.location.reload();
-        } else {
-          window.alert(res.message || "Login Failed");
-        }
-        setLoading(false);
-      },
-      (error) => {
+    AuthService.register(names, email, username, password)
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
         const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
+          (err.response && err.response.data && err.response.data.message) ||
+          err.message ||
+          err.toString();
         setLoading(false);
         setMessage(resMessage);
-      }
-    );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -62,7 +58,7 @@ function Register({ setIsLogin }) {
       <div className="card card-container mw-450 mx-auto p-4">
         <h3 className="mb-4">Register</h3>
         {message && (
-          <div className="form-group">
+          <div className="form-group mb-0">
             <div className="alert alert-danger" role="alert">
               {message}
             </div>

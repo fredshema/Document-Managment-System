@@ -1,5 +1,6 @@
 package com.dms.model;
 
+import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -35,7 +36,7 @@ public class MinioFile {
         this.title = title;
     }
 
-    public String getUrl() {
-        return "http://localhost:8080/download/" + id.replace("\"", "");
+    public String getUrl(HttpServletRequest request) {
+        return request.getRequestURL().toString().replace(request.getServletPath(), "") + "/download/" + id.replace("\"", "");
     }
 }

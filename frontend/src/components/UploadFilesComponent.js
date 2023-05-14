@@ -42,21 +42,23 @@ export default class UploadFilesComponent extends Component {
       .then((response) => {
         this.setState({
           message: response.data.message,
-          currentFile: undefined,
-          progress: 0,
         });
-        return UploadService.getFiles();
       })
       .catch(() => {
         this.setState({
-          progress: 0,
           message: "Could not upload the file!",
-          currentFile: undefined,
         });
       })
       .finally(() => {
         this.setState({
           selectedFiles: undefined,
+          currentFile: undefined,
+          progress: 0,
+        });
+        UploadService.getFiles().then((response) => {
+          this.setState({
+            fileInfos: response.data,
+          });
         });
       });
   }
@@ -188,7 +190,9 @@ export default class UploadFilesComponent extends Component {
                       </div>
                     )}
                     {!edit.includes(file.id) && (
-                      <div className="col text-truncate" title={file.filename}>{file.filename}</div>
+                      <div className="col text-truncate" title={file.filename}>
+                        {file.filename}
+                      </div>
                     )}
                     <div className="col">{renderSize(file.size)}</div>
 

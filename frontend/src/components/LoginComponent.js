@@ -21,28 +21,29 @@ function Login({ setIsLogin }) {
     e.preventDefault();
     setMessage("");
     setLoading(true);
-    AuthService.login(username, password).then(
-      (res) => {
-        if(res.status === 200) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        window.location.reload();
-        }else{
-          window.alert(res.message || "Login Failed")
+    AuthService.login(username, password)
+      .then((res) => {
+        if (res.status === 200) {
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+          window.location.reload();
+        } else {
+          window.alert(res.message || "Login Failed");
         }
         setLoading(false);
-      },
-      (error) => {
+      })
+      .catch((err) => {
+        console.log(err);
         const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
+          (err.response && err.response.data && err.response.data.message) ||
+          err.message ||
+          err.toString();
         setLoading(false);
         setMessage(resMessage);
-      }
-    );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -50,7 +51,7 @@ function Login({ setIsLogin }) {
       <div className="card card-container mw-450 mx-auto p-4">
         <h3 className="mb-4">Login</h3>
         {message && (
-          <div className="form-group">
+          <div className="form-group mb-0">
             <div className="alert alert-danger" role="alert">
               {message}
             </div>
@@ -87,7 +88,9 @@ function Login({ setIsLogin }) {
           </div>
           <div className="form-group mt-4 mb-0 text-center">
             <span> Don't have an account? </span>{" "}
-            <a href="#" onClick={() => setIsLogin(false)}>Register</a>
+            <a href="#" onClick={() => setIsLogin(false)}>
+              Register
+            </a>
           </div>
         </form>
       </div>
