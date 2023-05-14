@@ -19,4 +19,4 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy our Spring Boot app to fly.io
-        run: flyctl deploy --remote-only
+        run: flyctl deploy --remote-only --dockerfile Dockerfile

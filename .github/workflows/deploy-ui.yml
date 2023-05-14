@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'backend/**'
+    paths:
+      - 'frontend/**'
 jobs:
   deploy:
     name: Deploy UI to Fly
