@@ -14,3 +14,7 @@ backend\.idea\httpRequests
 backend\.idea\dataSources
 backend\.idea\dataSources.local.xml
 fly.toml
+Dockerfile
+.dockerignore
+node_modules
+.git
