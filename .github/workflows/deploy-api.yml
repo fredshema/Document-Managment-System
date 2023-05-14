@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'frontend/**'
+    paths:
+      - 'backend/**'
 jobs:
   deploy:
     name: Deploy API to Fly
@@ -19,4 +19,4 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy Spring Boot app to fly.io
-        run: flyctl deploy --remote-only --dockerfile ./Dockerfile
+        run: cd backend && flyctl deploy --remote-only

@@ -4,9 +4,9 @@ WORKDIR /app
 VOLUME /tmp
 ENV DOCKER_BUILDKIT=0
 ENV COMPOSE_DOCKER_CLI_BUILD=0
-COPY backend/pom.xml /app
+COPY pom.xml /app
 RUN mvn dependency:go-offline
-COPY backend/src /app/src
+COPY /src /app/src
 RUN mvn package -DskipTests
 
 # Runner stage
