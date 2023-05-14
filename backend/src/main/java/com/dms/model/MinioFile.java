@@ -20,8 +20,8 @@ import javax.persistence.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 public class MinioFile {
-    @Value("${spring.application.url}")
     @Transient
+    @Value("${application.url}")
     private String applicationUrl;
 
     @Id
