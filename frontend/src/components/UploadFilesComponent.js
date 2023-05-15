@@ -1,6 +1,7 @@
 import React, { Component, useState } from "react";
 import Dropzone from "react-dropzone";
 import UploadService from "../services/UploadFilesService";
+import axiosInstance from "../Common";
 
 export default class UploadFilesComponent extends Component {
   constructor(props) {
@@ -72,6 +73,8 @@ export default class UploadFilesComponent extends Component {
   render() {
     const { selectedFiles, currentFile, progress, message, fileInfos, edit } =
       this.state;
+
+    const apiUrl = axiosInstance.getUri();
 
     const renderSize = (bytes) => {
       if (bytes === 0) return "0 Bytes";
@@ -215,7 +218,7 @@ export default class UploadFilesComponent extends Component {
                           Edit
                         </a>
                         <a
-                          href={`${file.url}`}
+                          href={`${apiUrl + file.url}`}
                           className="mx-1 btn btn-secondary btn-sm"
                         >
                           Download
