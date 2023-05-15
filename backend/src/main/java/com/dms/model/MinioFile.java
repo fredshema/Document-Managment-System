@@ -20,10 +20,6 @@ import javax.persistence.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 public class MinioFile {
-    @Transient
-    @Value("${application.url}")
-    private String applicationUrl;
-
     @Id
     private String id;
     private String title;
@@ -42,6 +38,6 @@ public class MinioFile {
     }
 
     public String getUrl() {
-        return applicationUrl + "/download/" + id.replace("\"", "");
+        return "/download/" + id.replace("\"", "");
     }
 }
