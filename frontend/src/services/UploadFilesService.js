@@ -14,8 +14,8 @@ class UploadFilesService {
     });
   }
 
-  getFiles() {
-    return http.get("/files");
+  getFiles(page, size) {
+    return http.get("/files?page=" + page + "&size=" + size);
   }
 
   deleteFile(id) {

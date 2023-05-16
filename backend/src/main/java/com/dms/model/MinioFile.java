@@ -26,7 +26,7 @@ public class MinioFile {
     private String filename;
     private Long size;
     private String url;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.DETACH)
     private User user;
 
     public String getTitle() {

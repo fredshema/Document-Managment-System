@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import Dropzone from "react-dropzone";
 import UploadService from "../services/UploadFilesService";
 import axiosInstance from "../Common";
@@ -8,6 +8,7 @@ export default class UploadFilesComponent extends Component {
     super(props);
     this.upload = this.upload.bind(this);
     this.onDrop = this.onDrop.bind(this);
+    this.getFiles = this.getFiles.bind(this);
 
     this.state = {
       selectedFiles: undefined,
@@ -16,13 +17,39 @@ export default class UploadFilesComponent extends Component {
       message: "",
       fileInfos: [],
       edit: [],
+      pagination: {
+        currentPage: 1,
+        totalPages: 0,
+        totalItems: 0,
+        perPage: 5,
+      },
+    };
+
+    this.pagination = {
+      currentPage: 0,
+      totalPages: 0,
+      totalItems: 0,
+      perPage: 5,
     };
   }
 
   componentDidMount() {
-    UploadService.getFiles().then((response) => {
+    this.getFiles();
+  }
+
+  getFiles() {
+    UploadService.getFiles(
+      this.state.pagination.currentPage - 1,
+      this.state.pagination.perPage
+    ).then((response) => {
       this.setState({
-        fileInfos: response.data,
+        fileInfos: response.data.content,
+        pagination: {
+          currentPage: response.data.number + 1,
+          totalPages: response.data.totalPages,
+          totalItems: response.data.totalElements,
+          perPage: response.data.size,
+        },
       });
     });
   }
@@ -56,11 +83,7 @@ export default class UploadFilesComponent extends Component {
           currentFile: undefined,
           progress: 0,
         });
-        UploadService.getFiles().then((response) => {
-          this.setState({
-            fileInfos: response.data,
-          });
-        });
+        this.getFiles();
       });
   }
 
@@ -73,6 +96,9 @@ export default class UploadFilesComponent extends Component {
   render() {
     const { selectedFiles, currentFile, progress, message, fileInfos, edit } =
       this.state;
+
+    const { currentPage, totalPages, totalItems, perPage } =
+      this.state.pagination;
 
     const apiUrl = axiosInstance.getUri();
 
@@ -115,6 +141,20 @@ export default class UploadFilesComponent extends Component {
         .finally(() => {
           this.setState({ edit: edit.filter((item) => item !== id) });
         });
+    };
+
+    const changePage = (page) => {
+      console.log(page);
+      this.state.pagination.currentPage = page;
+      this.setState({
+        pagination: {
+          currentPage: page,
+          totalPages: totalPages,
+          totalItems: totalItems,
+          perPage: perPage,
+        },
+      });
+      this.getFiles();
     };
 
     return (
@@ -235,6 +275,64 @@ export default class UploadFilesComponent extends Component {
                 </li>
               ))}
             </ul>
+
+            {/* Pagination if contents are over perPage */}
+            {totalItems > perPage && (
+              <div className="card-footer">
+                <div className="row">
+                  <div className="col">
+                    <p className="text-muted">
+                      Showing {currentPage} of {totalPages} pages
+                    </p>
+                  </div>
+                  <div className="col">
+                    <nav aria-label="Page navigation example">
+                      <ul className="pagination justify-content-end">
+                        <li
+                          className={`page-item ${
+                            currentPage === 1 ? "disabled" : ""
+                          }`}
+                        >
+                          <a
+                            className="page-link"
+                            onClick={() => changePage(currentPage - 1)}
+                          >
+                            Previous
+                          </a>
+                        </li>
+                        {[...Array(totalPages)].map((page, i) => (
+                          <li
+                            key={i}
+                            className={`page-item ${
+                              currentPage === i + 1 ? "active" : ""
+                            }`}
+                          >
+                            <a
+                              className="page-link"
+                              onClick={() => changePage(i + 1)}
+                            >
+                              {i + 1}
+                            </a>
+                          </li>
+                        ))}
+                        <li
+                          className={`page-item ${
+                            currentPage === totalPages ? "disabled" : ""
+                          }`}
+                        >
+                          <a
+                            className="page-link"
+                            onClick={() => changePage(currentPage + 1)}
+                          >
+                            Next
+                          </a>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

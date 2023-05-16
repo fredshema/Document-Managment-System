@@ -5,6 +5,7 @@ import com.dms.model.MinioFile;
 import com.dms.service.MinioService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +36,8 @@ public class FileController {
     }
 
     @GetMapping("/files")
-    public ResponseEntity<List<MinioFile>> getListOfFiles() throws Exception {
-        return new ResponseEntity<>(minioService.getListObjects(), HttpStatus.OK);
+    public ResponseEntity<Page<MinioFile>> getListOfFiles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) throws Exception {
+        return new ResponseEntity<>(minioService.getListObjects(page, size), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

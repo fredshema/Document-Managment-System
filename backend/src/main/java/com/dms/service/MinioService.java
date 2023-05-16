@@ -10,12 +10,13 @@ import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,14 +43,14 @@ public class MinioService {
         return file.getTitle() + "." + extension;
     }
 
-    public List<MinioFile> getListObjects() {
-        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+    public Page<MinioFile> getListObjects(Integer page, Integer size) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findUserByUsername(authentication.getName());
-        return minioFileRepository.findAllByUserId(user.getId());
+        return minioFileRepository.findAllByUserId(PageRequest.of(page, size), user.getId());
     }
 
     public MinioFile uploadFile(FileDto request) {
-        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findUserByUsername(authentication.getName());
         ObjectWriteResponse item = null;
         System.out.println("Username: " + authentication.getName());
@@ -168,6 +169,7 @@ public class MinioService {
                             .title(item.objectName())
                             .filename(item.objectName())
                             .size(item.size())
+                            .user(null)
                             .build()).toList();
 
             minioFileRepository.deleteAll(deletedFiles);
